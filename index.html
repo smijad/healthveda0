@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4-Pillar Ayurvedic Assessment Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .nav-pills {
+            display: flex;
+            background: #f8f9fa;
+            padding: 0;
+            margin: 0;
+            border-bottom: 3px solid #e9ecef;
+        }
+        
+        .nav-pill {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            position: relative;
+        }
+        
+        .nav-pill:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .nav-pill.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .nav-pill.completed {
+            background: #28a745;
+            color: white;
+        }
+        
+        .content {
+            padding: 40px;
+            min-height: 600px;
+        }
+        
+        .assessment-section {
+            display: none;
+        }
+        
+        .assessment-section.active {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section-header {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .section-header h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .parameter-group {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease;
+        }
+        
+        .parameter-group:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .parameter-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .option-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .option-card:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .option-card.selected {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+        
+        .option-title {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .option-description {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        
+        .score-display {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .score-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .score-interpretation {
+            font-size: 1.2em;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+        
+        .results-summary {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .result-score {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .result-interpretation {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 20px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .patient-info {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #495057;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .disclaimer {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #856404;
+        }
+        
+        .disclaimer h4 {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-pills {
+                flex-direction: column;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>4-Pillar Ayurvedic Assessment</h1>
+            <p>Comprehensive evaluation based on classical Ayurvedic principles</p>
+            <p><em>Assessment tool developed by Dr. Prakash Kumbar</em></p>
+        </div>
+        
+        <nav class="nav-pills">
+            <button class="nav-pill active" data-section="patient-info">Patient Info</button>
+            <button class="nav-pill" data-section="agni">Agni Assessment</button>
+            <button class="nav-pill" data-section="dosha">Dosha Assessment</button>
+            <button class="nav-pill" data-section="dhatu">Dhatu Assessment</button>
+            <button class="nav-pill" data-section="srotas">Srotas Assessment</button>
+            <button class="nav-pill" data-section="results">Results</button>
+        </nav>
+        
+        <div class="content">
+            <!-- Patient Information Section -->
+            <div class="assessment-section active" id="patient-info">
+                <div class="section-header">
+                    <h2>Patient Case Record</h2>
+                    <p>Please provide basic information for the assessment</p>
+                </div>
+                
+                <div class="patient-info">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Name:</label>
+                            <input type="text" id="patient-name" placeholder="Enter patient name">
+                        </div>
+                        <div class="form-group">
+                            <label>Age/Sex:</label>
+                            <input type="text" id="patient-age-sex" placeholder="e.g., 35/M or 28/F">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>OPD/IPD No:</label>
+                            <input type="text" id="patient-id" placeholder="Patient ID number">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Chief Complaints:</label>
+                            <textarea id="chief-complaints" rows="3" placeholder="Describe main symptoms or concerns"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Past History:</label>
+                            <textarea id="past-history" rows="3" placeholder="Relevant medical history"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Additional Points:</label>
+                            <textarea id="additional-points" rows="2" placeholder="Any other relevant information"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="disclaimer">
+                    <h4>Important Disclaimer</h4>
+                    <p>This assessment tool is for educational and clinical reference purposes only. It should not replace professional medical diagnosis or treatment. Always consult with qualified healthcare practitioners for proper medical advice and treatment decisions.</p>
+                </div>
+            </div>
+            
+            <!-- Agni Assessment Section -->
+            <div class="assessment-section" id="agni">
+                <div class="section-header">
+                    <h2>Agni Dushti Assessment</h2>
+                    <p>Based on types of Agni and classical lakshanas from Charaka, Ashtanga Hridaya, and modern understanding</p>
+                </div>
+                
+                <div class="score-display">
+                    <div>Current Agni Score</div>
+                    <div class="score-number" id="agni-score">0</div>
+                    <div class="score-interpretation" id="agni-interpretation">Sama Agni</div>
+                </div>
+                
+                <!-- Agni parameters will be generated by JavaScript -->
+                <div id="agni-parameters"></div>
+            </div>
+            
+            <!-- Dosha Assessment Section -->
+            <div class="assessment-section" id="dosha">
+                <div class="section-header">
+                    <h2>Dosha Dushti Assessment</h2>
+                    <p>Based on classical lakshanas from Caraka, Sushruta, and Vagbhata</p>
+                </div>
+                
+                <div class="score-display">
+                    <div style="display: flex; justify-content: space-around;">
+                        <div>
+                            <div>Vata</div>
+                            <div class="score-number" id="vata-score">0</div>
+                        </div>
+                        <div>
+                            <div>Pitta</div>
+                            <div class="score-number" id="pitta-score">0</div>
+                        </div>
+                        <div>
+                            <div>Kapha</div>
+                            <div class="score-number" id="kapha-score">0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="dosha-parameters"></div>
+            </div>
+            
+            <!-- Dhatu Assessment Section -->
+            <div class="assessment-section" id="dhatu">
+                <div class="section-header">
+                    <h2>Dhatu Dushti Assessment</h2>
+                    <p>Assessment for classical signs of kshaya (depletion) and vriddhi (excess)</p>
+                </div>
+                
+                <div class="score-display">
+                    <div>Total Dhatu Disturbances</div>
+                    <div class="score-number" id="dhatu-score">0</div>
+                </div>
+                
+                <div id="dhatu-parameters"></div>
+            </div>
+            
+            <!-- Srotas Assessment Section -->
+            <div class="assessment-section" id="srotas">
+                <div class="section-header">
+                    <h2>Srotas Dushti Assessment</h2>
+                    <p>Each srotas evaluated based on classical lakshanas mapped to modern signs</p>
+                </div>
+                
+                <div class="score-display">
+                    <div>Affected Srotas Systems</div>
+                    <div class="score-number" id="srotas-score">0</div>
+                </div>
+                
+                <div id="srotas-parameters"></div>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="assessment-section" id="results">
+                <div class="section-header">
+                    <h2>Assessment Results Summary</h2>
+                    <p>Complete analysis of all four pillars</p>
+                </div>
+                
+                <div class="results-summary" id="results-content">
+                    <!-- Results will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="navigation-buttons">
+                <button class="btn btn-secondary" id="prev-btn" onclick="previousSection()">Previous</button>
+                <button class="btn btn-primary" id="next-btn" onclick="nextSection()">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Assessment data structure
+        const assessmentData = {
+            agni: {
+                parameters: [
+                    {
+                        name: "Hunger",
+                        options: [
+                            { type: "visama", title: "Vishama Agni", description: "Irregular, unpredictable hunger" },
+                            { type: "tikshna", title: "Tikshna Agni", description: "Excessive, frequent hunger" },
+                            { type: "manda", title: "Manda Agni", description: "Poor, delayed hunger" },
+                            { type: "sama", title: "Sama Agni", description: "Timely, appropriate hunger" }
+                        ]
+                    },
+                    {
+                        name: "Digestion Timing",
+                        options: [
+                            { type: "visama", title: "Vishama Agni", description: "Sometimes fast, sometimes slow" },
+                            { type: "tikshna", title: "Tikshna Agni", description: "Very rapid digestion" },
+                            { type: "manda", title: "Manda Agni", description: "Very slow, sluggish digestion" },
+                            { type: "sama", title: "Sama Agni", description: "Timely and comfortable" }
+                        ]
+                    },
+                    {
+                        name: "Stool Formation",
+                        options: [
+                            { type: "visama", title: "Vishama Agni", description: "Alternate constipation & loose" },
+                            { type: "tikshna", title: "Tikshna Agni", description: "Frequent, loose, burning" },
+                            { type: "manda", title: "Manda Agni", description: "Constipated, sticky, mucoid" },
+                            { type: "sama", title: "Sama Agni", description: "Well-formed, once/day" }
+                        ]
+                    },
+                    {
+                        name: "Bloating/Discomfort",
+                        options: [
+                            { type: "visama", title: "Vishama Agni", description: "Gas, gurgling, erratic" },
+                            { type: "tikshna", title: "Tikshna Agni", description: "Burning sensation" },
+                            { type: "manda", title: "Manda Agni", description: "Heaviness, lethargy" },
+                            { type: "sama", title: "Sama Agni", description: "No discomfort" }
+                        ]
+                    },
+                    {
+                        name: "Appetite Response",
+                        options: [
+                            { type: "visama", title: "Vishama Agni", description: "Becomes erratic" },
+                            { type: "tikshna", title: "Tikshna Agni", description: "Becomes hungrier" },
+                            { type: "manda", title: "Manda Agni", description: "Becomes duller" },
+                            { type: "sama", title: "Sama Agni", description: "Stays steady" }
+                        ]
+                    },
+                    {
+                        name: "Tongue Coating",
+                        options: [
+                            { type: "visama", title: "Vishama Agni", description: "Variable, sometimes dry" },
+                            { type: "tikshna", title: "Tikshna Agni", description: "Red, yellow tinge" },
+                            { type: "manda", title: "Manda Agni", description: "Thick white coating" },
+                            { type: "sama", title: "Sama Agni", description: "Clean" }
+                        ]
+                    },
+                    {
+                        name: "After Food Sensation",
+                        options: [
+                            { type: "visama", title: "Vishama Agni", description: "Bloated or unsatisfied" },
+                            { type: "tikshna", title: "Tikshna Agni", description: "Hungry again quickly" },
+                            { type: "manda", title: "Manda Agni", description: "Heavy, sleepy" },
+                            { type: "sama", title: "Sama Agni", description: "Light and content" }
+                        ]
+                    },
+                    {
+                        name: "Weight Change",
+                        options: [
+                            { type: "visama", title: "Vishama Agni", description: "Unpredictable" },
+                            { type: "tikshna", title: "Tikshna Agni", description: "Weight loss despite eating" },
+                            { type: "manda", title: "Manda Agni", description: "Weight gain despite eating" },
+                            { type: "sama", title: "Sama Agni", description: "Maintains weight" }
+                        ]
+                    }
+                ]
+            },
+            dosha: {
+                parameters: [
+                    {
+                        name: "Agni (Digestive Fire)",
+                        vata: "Irregular, variable",
+                        pitta: "Very sharp, frequent hunger",
+                        kapha: "Poor appetite, slow digestion"
+                    },
+                    {
+                        name: "Mala (Stool)",
+                        vata: "Constipation, dry, scanty",
+                        pitta: "Loose, yellowish, burning",
+                        kapha: "Sticky, mucus-laden, sluggish"
+                    },
+                    {
+                        name: "Mutra (Urine)",
+                        vata: "Scanty, frequent, obstructed",
+                        pitta: "Yellow, burning",
+                        kapha: "Increased, cloudy"
+                    },
+                    {
+                        name: "Sveda (Sweat)",
+                        vata: "Dry skin, no sweat",
+                        pitta: "Excessive sweating, odor",
+                        kapha: "Cold, little sweat"
+                    },
+                    {
+                        name: "Sparsha (Touch/Skin)",
+                        vata: "Rough, dry, cold skin",
+                        pitta: "Burning, warm, red skin",
+                        kapha: "Thick, oily, cold skin"
+                    },
+                    {
+                        name: "Bala/Ojas (Strength)",
+                        vata: "Weakness, low endurance",
+                        pitta: "Moderate stamina, irritability",
+                        kapha: "Heavy, lazy, dull"
+                    },
+                    {
+                        name: "Manasika Bhava (Mental State)",
+                        vata: "Anxiety, worry, fear",
+                        pitta: "Anger, short-tempered",
+                        kapha: "Dullness, depression, inertia"
+                    },
+                    {
+                        name: "Gati/Bhrama (Movement)",
+                        vata: "Fast, jerky, tremors",
+                        pitta: "Sudden shifts, burning sensations",
+                        kapha: "Sluggish, slow, heaviness"
+                    },
+                    {
+                        name: "Roopam/External (Appearance)",
+                        vata: "Thin, dry, cracked",
+                        pitta: "Red, inflamed, acne",
+                        kapha: "Puffy, moist, oily"
+                    },
+                    {
+                        name: "Jihva (Tongue)",
+                        vata: "Dry, rough, blackish",
+                        pitta: "Red, yellow coat",
+                        kapha: "Thick, white coat"
+                    }
+                ]
+            },
+            dhatu: {
+                parameters: [
+                    {
+                        name: "Rasa Dhatu (Plasma)",
+                        symptoms: [
+                            { type: "kshaya", description: "Pale, dry, rough skin" },
+                            { type: "vriddhi", description: "Oily, dull skin" },
+                            { type: "kshaya", description: "Excessive thirst" },
+                            { type: "vriddhi", description: "No thirst, heaviness" },
+                            { type: "kshaya", description: "Very less sweating" },
+                            { type: "vriddhi", description: "Excessive, sticky sweating" },
+                            { type: "kshaya", description: "Low enthusiasm, anxiety" },
+                            { type: "vriddhi", description: "Dullness, lack of clarity" }
+                        ]
+                    },
+                    {
+                        name: "Rakta Dhatu (Blood)",
+                        symptoms: [
+                            { type: "kshaya", description: "Pale skin color" },
+                            { type: "vriddhi", description: "Red, flushed skin" },
+                            { type: "kshaya", description: "Loss of luster, pale sclera" },
+                            { type: "vriddhi", description: "Redness, burning eyes" },
+                            { type: "kshaya", description: "Easy bruising, fatigue" },
+                            { type: "vriddhi", description: "Nasal/gum bleeding" },
+                            { type: "kshaya", description: "Low drive, passive" },
+                            { type: "vriddhi", description: "Irritable, short-tempered" }
+                        ]
+                    },
+                    {
+                        name: "Mamsa Dhatu (Muscle)",
+                        symptoms: [
+                            { type: "kshaya", description: "Muscle wasting, weakness" },
+                            { type: "vriddhi", description: "Heaviness, stiffness" },
+                            { type: "kshaya", description: "Emaciation" },
+                            { type: "vriddhi", description: "Abscesses, fibroids, cysts" },
+                            { type: "kshaya", description: "Unstable posture" },
+                            { type: "vriddhi", description: "Rigid, limited flexibility" }
+                        ]
+                    },
+                    {
+                        name: "Meda Dhatu (Fat)",
+                        symptoms: [
+                            { type: "kshaya", description: "Thin, underweight" },
+                            { type: "vriddhi", description: "Obesity, overweight" },
+                            { type: "kshaya", description: "Dryness" },
+                            { type: "vriddhi", description: "Excess sweat, oil secretion" },
+                            { type: "kshaya", description: "Tiredness, weakness" },
+                            { type: "vriddhi", description: "Lethargy, heaviness" }
+                        ]
+                    },
+                    {
+                        name: "Asthi Dhatu (Bone)",
+                        symptoms: [
+                            { type: "kshaya", description: "Brittle bones, cracking joints" },
+                            { type: "vriddhi", description: "Thick, stiff bones/joints" },
+                            { type: "kshaya", description: "Brittle, weak, falling nails/teeth/hair" },
+                            { type: "vriddhi", description: "Thick, hard, rigid nails/teeth/hair" },
+                            { type: "kshaya", description: "Weak spine, stooping" },
+                            { type: "vriddhi", description: "Rigid posture, deformities" }
+                        ]
+                    },
+                    {
+                        name: "Majja Dhatu (Nerve)",
+                        symptoms: [
+                            { type: "kshaya", description: "Hollow, weak bone pain" },
+                            { type: "vriddhi", description: "Deep heaviness in bones" },
+                            { type: "kshaya", description: "Numbness, tremors, tingling" },
+                            { type: "vriddhi", description: "Heaviness, sluggish response" },
+                            { type: "kshaya", description: "Weak vision, poor memory" },
+                            { type: "vriddhi", description: "Lethargy, slow cognition" }
+                        ]
+                    },
+                    {
+                        name: "Shukra Dhatu (Reproductive)",
+                        symptoms: [
+                            { type: "kshaya", description: "Low desire, low quantity, ED" },
+                            { type: "vriddhi", description: "Hyperlibido, PCOD, wet dreams" },
+                            { type: "kshaya", description: "Scanty, irregular menses" },
+                            { type: "vriddhi", description: "Heavy bleeding, frequent cycle" },
+                            { type: "kshaya", description: "Infertility, weak sperm/ova" },
+                            { type: "vriddhi", description: "Premature ejaculation, ovarian cysts" }
+                        ]
+                    }
+                ]
+            },
+            srotas: [
+                {
+                    name: "Annavaha Srotas (Digestive System)",
+                    symptoms: [
+                        "Bloating/Distension",
+                        "Irregular digestion",
+                        "Nausea",
+                        "Heaviness after food",
+                        "Constipation or loose stools"
+                    ]
+                },
+                {
+                    name: "Rasavaha Srotas (Circulatory System)",
+                    symptoms: [
+                        "Loss of appetite",
+                        "Fatigue/low energy",
+                        "Cold extremities",
+                        "Poor complexion/pallor"
+                    ]
+                },
+                {
+                    name: "Raktavaha Srotas (Blood Circulation)",
+                    symptoms: [
+                        "Palpitations",
+                        "Burning sensations",
+                        "Skin rashes/redness",
+                        "Hypertension"
+                    ]
+                },
+                {
+                    name: "Mamsavaha Srotas (Muscle System)",
+                    symptoms: [
+                        "Muscle weakness",
+                        "Myalgia (body pain)",
+                        "Muscle stiffness",
+                        "Fibromyalgia-like symptoms"
+                    ]
+                },
+                {
+                    name: "Medavaha Srotas (Fat Metabolism)",
+                    symptoms: [
+                        "Obesity",
+                        "Sluggish metabolism",
+                        "Dyslipidemia",
+                        "Fatty liver features"
+                    ]
+                },
+                {
+                    name: "Shukravaha Srotas (Reproductive System)",
+                    symptoms: [
+                        "Irregular menses/cycles",
+                        "Low libido",
+                        "Infertility signs",
+                        "PCOD/Hormonal imbalance"
+                    ]
+                },
+                {
+                    name: "Pranavaha Srotas (Respiratory System)",
+                    symptoms: [
+                        "Shortness of breath",
+                        "Wheezing/asthma",
+                        "Chest congestion",
+                        "Low O₂ saturation"
+                    ]
+                },
+                {
+                    name: "Udakavaha Srotas (Fluid Balance)",
+                    symptoms: [
+                        "Dry mouth",
+                        "Excessive thirst",
+                        "Edema",
+                        "Poor hydration regulation"
+                    ]
+                },
+                {
+                    name: "Manovaha Srotas (Nervous System)",
+                    symptoms: [
+                        "Anxiety/restlessness",
+                        "Sleep disturbances",
+                        "Brain fog/poor focus",
+                        "Mood swings/irritability"
+                    ]
+                }
+            ]
+        };
+
+        // Current assessment state
+        let currentSection = 'patient-info';
+        let assessmentResults = {
+            agni: { scores: {}, totalScore: 0, interpretation: 'Sama Agni' },
+            dosha: { vata: 0, pitta: 0, kapha: 0 },
+            dhatu: { scores: {}, totalScore: 0 },
+            srotas: { scores: {}, affectedSystems: 0 },
+            patientInfo: {}
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAssessment();
+            updateNavigationButtons();
+        });
+
+        function initializeAssessment() {
+            generateAgniAssessment();
+            generateDoshaAssessment();
+            generateDhatuAssessment();
+            generateSrotasAssessment();
+        }
+
+        function generateAgniAssessment() {
+            const container = document.getElementById('agni-parameters');
+            container.innerHTML = '';
+
+            assessmentData.agni.parameters.forEach((parameter, index) => {
+                const parameterDiv = document.createElement('div');
+                parameterDiv.className = 'parameter-group';
+                
+                parameterDiv.innerHTML = `
+                    <div class="parameter-title">${index + 1}. ${parameter.name}</div>
+                    <div class="options-grid">
+                        ${parameter.options.map((option, optionIndex) => `
+                            <div class="option-card" data-parameter="${index}" data-option="${option.type}" onclick="selectAgniOption(${index}, '${option.type}')">
+                                <div class="option-title">${option.title}</div>
+                                <div class="option-description">${option.description}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                container.appendChild(parameterDiv);
+            });
+        }
+
+        function generateDoshaAssessment() {
+            const container = document.getElementById('dosha-parameters');
+            container.innerHTML = '';
+
+            assessmentData.dosha.parameters.forEach((parameter, index) => {
+                const parameterDiv = document.createElement('div');
+                parameterDiv.className = 'parameter-group';
+                
+                parameterDiv.innerHTML = `
+                    <div class="parameter-title">${index + 1}. ${parameter.name}</div>
+                    <div class="options-grid">
+                        <div class="option-card" data-parameter="${index}" data-dosha="vata" onclick="selectDoshaOption(${index}, 'vata')">
+                            <div class="option-title">Vata Dushti</div>
+                            <div class="option-description">${parameter.vata}</div>
+                        </div>
+                        <div class="option-card" data-parameter="${index}" data-dosha="pitta" onclick="selectDoshaOption(${index}, 'pitta')">
+                            <div class="option-title">Pitta Dushti</div>
+                            <div class="option-description">${parameter.pitta}</div>
+                        </div>
+                        <div class="option-card" data-parameter="${index}" data-dosha="kapha" onclick="selectDoshaOption(${index}, 'kapha')">
+                            <div class="option-title">Kapha Dushti</div>
+                            <div class="option-description">${parameter.kapha}</div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(parameterDiv);
+            });
+        }
+
+        function generateDhatuAssessment() {
+            const container = document.getElementById('dhatu-parameters');
+            container.innerHTML = '';
+
+            assessmentData.dhatu.parameters.forEach((dhatu, dhatuIndex) => {
+                const dhatuDiv = document.createElement('div');
+                dhatuDiv.className = 'parameter-group';
+                
+                let symptomsHTML = '';
+                dhatu.symptoms.forEach((symptom, symptomIndex) => {
+                    const symptomId = `dhatu-${dhatuIndex}-${symptomIndex}`;
+                    symptomsHTML += `
+                        <div style="margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                            <span>${symptom.description}</span>
+                            <div>
+                                <button class="btn" style="margin: 2px; padding: 5px 10px; font-size: 0.8em;" onclick="selectDhatuScore('${symptomId}', 0)">0</button>
+                                <button class="btn" style="margin: 2px; padding: 5px 10px; font-size: 0.8em;" onclick="selectDhatuScore('${symptomId}', 1)">1</button>
+                                <button class="btn" style="margin: 2px; padding: 5px 10px; font-size: 0.8em;" onclick="selectDhatuScore('${symptomId}', 2)">2</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                dhatuDiv.innerHTML = `
+                    <div class="parameter-title">${dhatu.name}</div>
+                    <div style="font-size: 0.9em; color: #6c757d; margin-bottom: 15px;">
+                        Score: 0 = Normal, 1 = Mild Dushti, 2 = Moderate/Severe Dushti
+                    </div>
+                    ${symptomsHTML}
+                `;
+                
+                container.appendChild(dhatuDiv);
+            });
+        }
+
+        function generateSrotasAssessment() {
+            const container = document.getElementById('srotas-parameters');
+            container.innerHTML = '';
+
+            assessmentData.srotas.forEach((srotas, srotasIndex) => {
+                const srotasDiv = document.createElement('div');
+                srotasDiv.className = 'parameter-group';
+                
+                let symptomsHTML = '';
+                srotas.symptoms.forEach((symptom, symptomIndex) => {
+                    const symptomId = `srotas-${srotasIndex}-${symptomIndex}`;
+                    symptomsHTML += `
+                        <div style="margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                            <span>${symptom}</span>
+                            <div>
+                                <button class="btn" style="margin: 2px; padding: 5px 10px; font-size: 0.8em;" onclick="selectSrotasScore('${symptomId}', 0)">0</button>
+                                <button class="btn" style="margin: 2px; padding: 5px 10px; font-size: 0.8em;" onclick="selectSrotasScore('${symptomId}', 1)">1</button>
+                                <button class="btn" style="margin: 2px; padding: 5px 10px; font-size: 0.8em;" onclick="selectSrotasScore('${symptomId}', 2)">2</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                srotasDiv.innerHTML = `
+                    <div class="parameter-title">${srotas.name}</div>
+                    <div style="font-size: 0.9em; color: #6c757d; margin-bottom: 15px;">
+                        Score: 0 = Absent/Normal, 1 = Mild, 2 = Severe
+                    </div>
+                    ${symptomsHTML}
+                `;
+                
+                container.appendChild(srotasDiv);
+            });
+        }
+
+        function selectAgniOption(parameterIndex, optionType) {
+            // Remove previous selections for this parameter
+            const parameterCards = document.querySelectorAll(`[data-parameter="${parameterIndex}"]`);
+            parameterCards.forEach(card => card.classList.remove('selected'));
+            
+            // Add selection to clicked option
+            const selectedCard = document.querySelector(`[data-parameter="${parameterIndex}"][data-option="${optionType}"]`);
+            selectedCard.classList.add('selected');
+            
+            // Update assessment results
+            assessmentResults.agni.scores[parameterIndex] = optionType;
+            calculateAgniScore();
+        }
+
+        function selectDoshaOption(parameterIndex, doshaType) {
+            // Remove previous selections for this parameter
+            const parameterCards = document.querySelectorAll(`[data-parameter="${parameterIndex}"]`);
+            parameterCards.forEach(card => card.classList.remove('selected'));
+            
+            // Add selection to clicked option
+            const selectedCard = document.querySelector(`[data-parameter="${parameterIndex}"][data-dosha="${doshaType}"]`);
+            selectedCard.classList.add('selected');
+            
+            // Update dosha scores (simplified scoring - 1 point per selection)
+            if (!assessmentResults.dosha.selections) {
+                assessmentResults.dosha.selections = {};
+            }
+            assessmentResults.dosha.selections[parameterIndex] = doshaType;
+            calculateDoshaScores();
+        }
+
+        function selectDhatuScore(symptomId, score) {
+            // Update button appearance
+            const buttons = document.querySelectorAll(`button[onclick*="${symptomId}"]`);
+            buttons.forEach(btn => btn.classList.remove('btn-primary'));
+            buttons[score].classList.add('btn-primary');
+            
+            // Update assessment results
+            assessmentResults.dhatu.scores[symptomId] = score;
+            calculateDhatuScore();
+        }
+
+        function selectSrotasScore(symptomId, score) {
+            // Update button appearance
+            const buttons = document.querySelectorAll(`button[onclick*="${symptomId}"]`);
+            buttons.forEach(btn => btn.classList.remove('btn-primary'));
+            buttons[score].classList.add('btn-primary');
+            
+            // Update assessment results
+            assessmentResults.srotas.scores[symptomId] = score;
+            calculateSrotasScore();
+        }
+
+        function calculateAgniScore() {
+            const scores = assessmentResults.agni.scores;
+            let agniTypeScores = { visama: 0, tikshna: 0, manda: 0, sama: 0 };
+            
+            Object.values(scores).forEach(type => {
+                agniTypeScores[type]++;
+            });
+            
+            // Find dominant agni type
+            const dominantType = Object.keys(agniTypeScores).reduce((a, b) => 
+                agniTypeScores[a] > agniTypeScores[b] ? a : b
+            );
+            
+            const totalDushti = agniTypeScores.visama + agniTypeScores.tikshna + agniTypeScores.manda;
+            
+            let interpretation = '';
+            if (totalDushti === 0 || dominantType === 'sama') {
+                interpretation = 'Sama Agni (Balanced)';
+            } else if (totalDushti <= 2) {
+                interpretation = `Mild ${dominantType.charAt(0).toUpperCase() + dominantType.slice(1)} Agni Dushti`;
+            } else if (totalDushti <= 4) {
+                interpretation = `Moderate ${dominantType.charAt(0).toUpperCase() + dominantType.slice(1)} Agni Dushti`;
+            } else {
+                interpretation = `Severe ${dominantType.charAt(0).toUpperCase() + dominantType.slice(1)} Agni Dushti`;
+            }
+            
+            assessmentResults.agni.totalScore = totalDushti;
+            assessmentResults.agni.interpretation = interpretation;
+            
+            document.getElementById('agni-score').textContent = totalDushti;
+            document.getElementById('agni-interpretation').textContent = interpretation;
+        }
+
+        function calculateDoshaScores() {
+            const selections = assessmentResults.dosha.selections || {};
+            const scores = { vata: 0, pitta: 0, kapha: 0 };
+            
+            Object.values(selections).forEach(dosha => {
+                scores[dosha]++;
+            });
+            
+            assessmentResults.dosha = { ...assessmentResults.dosha, ...scores };
+            
+            document.getElementById('vata-score').textContent = scores.vata;
+            document.getElementById('pitta-score').textContent = scores.pitta;
+            document.getElementById('kapha-score').textContent = scores.kapha;
+        }
+
+        function calculateDhatuScore() {
+            const scores = Object.values(assessmentResults.dhatu.scores);
+            const totalScore = scores.reduce((sum, score) => sum + score, 0);
+            assessmentResults.dhatu.totalScore = totalScore;
+            document.getElementById('dhatu-score').textContent = totalScore;
+        }
+
+        function calculateSrotasScore() {
+            const scores = assessmentResults.srotas.scores;
+            let affectedSystems = 0;
+            
+            // Group scores by srotas system
+            const systemScores = {};
+            Object.keys(scores).forEach(key => {
+                const systemIndex = key.split('-')[1];
+                if (!systemScores[systemIndex]) systemScores[systemIndex] = 0;
+                systemScores[systemIndex] += scores[key];
+            });
+            
+            // Count systems with significant dushti (score > 2)
+            Object.values(systemScores).forEach(score => {
+                if (score >= 2) affectedSystems++;
+            });
+            
+            assessmentResults.srotas.affectedSystems = affectedSystems;
+            document.getElementById('srotas-score').textContent = affectedSystems;
+        }
+
+        function switchSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.assessment-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).classList.add('active');
+            
+            // Update navigation pills
+            document.querySelectorAll('.nav-pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+            
+            currentSection = sectionName;
+            updateNavigationButtons();
+            
+            // Generate results if on results page
+            if (sectionName === 'results') {
+                generateResults();
+            }
+        }
+
+        function nextSection() {
+            const sections = ['patient-info', 'agni', 'dosha', 'dhatu', 'srotas', 'results'];
+            const currentIndex = sections.indexOf(currentSection);
+            if (currentIndex < sections.length - 1) {
+                switchSection(sections[currentIndex + 1]);
+            }
+        }
+
+        function previousSection() {
+            const sections = ['patient-info', 'agni', 'dosha', 'dhatu', 'srotas', 'results'];
+            const currentIndex = sections.indexOf(currentSection);
+            if (currentIndex > 0) {
+                switchSection(sections[currentIndex - 1]);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const sections = ['patient-info', 'agni', 'dosha', 'dhatu', 'srotas', 'results'];
+            const currentIndex = sections.indexOf(currentSection);
+            
+            document.getElementById('prev-btn').disabled = currentIndex === 0;
+            document.getElementById('next-btn').textContent = currentIndex === sections.length - 1 ? 'Complete Assessment' : 'Next';
+        }
+
+        function generateResults() {
+            const resultsContainer = document.getElementById('results-content');
+            
+            // Collect patient information
+            const patientInfo = {
+                name: document.getElementById('patient-name').value || 'Not provided',
+                ageSex: document.getElementById('patient-age-sex').value || 'Not provided',
+                patientId: document.getElementById('patient-id').value || 'Not provided',
+                chiefComplaints: document.getElementById('chief-complaints').value || 'Not provided',
+                pastHistory: document.getElementById('past-history').value || 'Not provided',
+                additionalPoints: document.getElementById('additional-points').value || 'Not provided'
+            };
+            
+            resultsContainer.innerHTML = `
+                <div style="margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                    <h3 style="color: #495057; margin-bottom: 15px;">Patient Information</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div><strong>Name:</strong> ${patientInfo.name}</div>
+                        <div><strong>Age/Sex:</strong> ${patientInfo.ageSex}</div>
+                        <div><strong>ID:</strong> ${patientInfo.patientId}</div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <div><strong>Chief Complaints:</strong> ${patientInfo.chiefComplaints}</div>
+                        <div><strong>Past History:</strong> ${patientInfo.pastHistory}</div>
+                        <div><strong>Additional Points:</strong> ${patientInfo.additionalPoints}</div>
+                    </div>
+                </div>
+                
+                <div class="result-item">
+                    <div>
+                        <div class="result-label">Agni Assessment</div>
+                        <div class="result-interpretation">${assessmentResults.agni.interpretation}</div>
+                    </div>
+                    <div class="result-score" style="color: ${getScoreColor(assessmentResults.agni.totalScore, 8)}">${assessmentResults.agni.totalScore}/8</div>
+                </div>
+                
+                <div class="result-item">
+                    <div>
+                        <div class="result-label">Dosha Assessment</div>
+                        <div class="result-interpretation">
+                            Vata: ${assessmentResults.dosha.vata}, 
+                            Pitta: ${assessmentResults.dosha.pitta}, 
+                            Kapha: ${assessmentResults.dosha.kapha}
+                        </div>
+                    </div>
+                    <div class="result-score">
+                        <div style="color: ${getScoreColor(assessmentResults.dosha.vata, 10)}">V: ${assessmentResults.dosha.vata}</div>
+                        <div style="color: ${getScoreColor(assessmentResults.dosha.pitta, 10)}">P: ${assessmentResults.dosha.pitta}</div>
+                        <div style="color: ${getScoreColor(assessmentResults.dosha.kapha, 10)}">K: ${assessmentResults.dosha.kapha}</div>
+                    </div>
+                </div>
+                
+                <div class="result-item">
+                    <div>
+                        <div class="result-label">Dhatu Assessment</div>
+                        <div class="result-interpretation">${getDhatuInterpretation(assessmentResults.dhatu.totalScore)}</div>
+                    </div>
+                    <div class="result-score" style="color: ${getScoreColor(assessmentResults.dhatu.totalScore, 20)}">${assessmentResults.dhatu.totalScore}</div>
+                </div>
+                
+                <div class="result-item">
+                    <div>
+                        <div class="result-label">Srotas Assessment</div>
+                        <div class="result-interpretation">${getSrotasInterpretation(assessmentResults.srotas.affectedSystems)}</div>
+                    </div>
+                    <div class="result-score" style="color: ${getScoreColor(assessmentResults.srotas.affectedSystems, 9)}">${assessmentResults.srotas.affectedSystems}/9</div>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 20px; background: #e8f4f8; border-radius: 10px; border-left: 4px solid #17a2b8;">
+                    <h4 style="color: #138496; margin-bottom: 15px;">Clinical Recommendations</h4>
+                    <p style="margin-bottom: 10px;"><strong>Assessment completed on:</strong> ${new Date().toLocaleDateString()}</p>
+                    <p style="color: #495057; line-height: 1.6;">
+                        This assessment provides a comprehensive evaluation based on classical Ayurvedic principles. 
+                        The results should be interpreted by qualified practitioners in conjunction with clinical examination 
+                        and other diagnostic methods. Treatment recommendations should follow established Ayurvedic protocols 
+                        and consider individual patient constitution and current health status.
+                    </p>
+                </div>
+            `;
+        }
+
+        function getScoreColor(score, maxScore) {
+            const percentage = (score / maxScore) * 100;
+            if (percentage <= 25) return '#28a745';
+            if (percentage <= 50) return '#ffc107';
+            if (percentage <= 75) return '#fd7e14';
+            return '#dc3545';
+        }
+
+        function getDhatuInterpretation(score) {
+            if (score <= 5) return 'Minimal dhatu disturbances';
+            if (score <= 15) return 'Moderate dhatu imbalances';
+            return 'Significant dhatu dushti requiring attention';
+        }
+
+        function getSrotasInterpretation(affectedSystems) {
+            if (affectedSystems === 0) return 'No significant srotas dushti';
+            if (affectedSystems <= 2) return 'Mild to moderate srotas disturbances';
+            return 'Multiple srotas systems affected';
+        }
+
+        // Event listeners for navigation pills
+        document.querySelectorAll('.nav-pill').forEach(pill => {
+            pill.addEventListener('click', function() {
+                const section = this.dataset.section;
+                switchSection(section);
+            });
+        });
+
+        // Save patient information
+        function savePatientInfo() {
+            const fields = ['patient-name', 'patient-age-sex', 'patient-id', 'chief-complaints', 'past-history', 'additional-points'];
+            fields.forEach(field => {
+                const element = document.getElementById(field);
+                if (element) {
+                    element.addEventListener('blur', function() {
+                        assessmentResults.patientInfo[field] = this.value;
+                    });
+                }
+            });
+        }
+
+        // Initialize patient info saving when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            savePatientInfo();
+        });
+
+        // Print functionality
+        function printResults() {
+            window.print();
+        }
+
+        // Export functionality (basic)
+        function exportResults() {
+            const results = {
+                timestamp: new Date().toISOString(),
+                patientInfo: assessmentResults.patientInfo,
+                agni: assessmentResults.agni,
+                dosha: assessmentResults.dosha,
+                dhatu: assessmentResults.dhatu,
+                srotas: assessmentResults.srotas
+            };
+            
+            const dataStr = JSON.stringify(results, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `ayurveda_assessment_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        // Reset assessment
+        function resetAssessment() {
+            if (confirm('Are you sure you want to reset all assessment data? This action cannot be undone.')) {
+                assessmentResults = {
+                    agni: { scores: {}, totalScore: 0, interpretation: 'Sama Agni' },
+                    dosha: { vata: 0, pitta: 0, kapha: 0 },
+                    dhatu: { scores: {}, totalScore: 0 },
+                    srotas: { scores: {}, affectedSystems: 0 },
+                    patientInfo: {}
+                };
+                
+                // Clear all form inputs
+                document.querySelectorAll('input, textarea').forEach(input => input.value = '');
+                
+                // Clear all selections
+                document.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
+                document.querySelectorAll('.btn-primary').forEach(btn => btn.classList.remove('btn-primary'));
+                
+                // Reset scores
+                document.getElementById('agni-score').textContent = '0';
+                document.getElementById('agni-interpretation').textContent = 'Sama Agni';
+                document.getElementById('vata-score').textContent = '0';
+                document.getElementById('pitta-score').textContent = '0';
+                document.getElementById('kapha-score').textContent = '0';
+                document.getElementById('dhatu-score').textContent = '0';
+                document.getElementById('srotas-score').textContent = '0';
+                
+                // Go back to first section
+                switchSection('patient-info');
+            }
+        }
+
+        // Add utility buttons to results section
+        function addUtilityButtons() {
+            const resultsSection = document.getElementById('results');
+            const utilityDiv = document.createElement('div');
+            utilityDiv.style.cssText = 'margin-top: 20px; text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px;';
+            utilityDiv.innerHTML = `
+                <button class="btn btn-primary" onclick="printResults()" style="margin: 5px;">Print Results</button>
+                <button class="btn btn-secondary" onclick="exportResults()" style="margin: 5px;">Export Data</button>
+                <button class="btn" onclick="resetAssessment()" style="margin: 5px; background: #dc3545; color: white;">Reset Assessment</button>
+            `;
+            
+            // Add after results content
+            const resultsContent = document.getElementById('results-content');
+            if (resultsContent && !document.querySelector('.utility-buttons')) {
+                utilityDiv.className = 'utility-buttons';
+                resultsContent.parentNode.insertBefore(utilityDiv, resultsContent.nextSibling);
+            }
+        }
+
+        // Enhanced results generation
+        function generateResults() {
+            const resultsContainer = document.getElementById('results-content');
+            
+            // Collect patient information
+            const patientInfo = {
+                name: document.getElementById('patient-name').value || 'Not provided',
+                ageSex: document.getElementById('patient-age-sex').value || 'Not provided',
+                patientId: document.getElementById('patient-id').value || 'Not provided',
+                chiefComplaints: document.getElementById('chief-complaints').value || 'Not provided',
+                pastHistory: document.getElementById('past-history').value || 'Not provided',
+                additionalPoints: document.getElementById('additional-points').value || 'Not provided'
+            };
+            
+            // Calculate completion percentage
+            const totalParams = 8 + 10 + Object.keys(assessmentData.dhatu.parameters).length * 3 + assessmentData.srotas.length * 4;
+            const completedParams = Object.keys(assessmentResults.agni.scores).length + 
+                                  Object.keys(assessmentResults.dosha.selections || {}).length + 
+                                  Object.keys(assessmentResults.dhatu.scores).length + 
+                                  Object.keys(assessmentResults.srotas.scores).length;
+            const completionPercentage = Math.round((completedParams / totalParams) * 100);
+            
+            resultsContainer.innerHTML = `
+                <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(45deg, #28a745, #20c997); color: white; border-radius: 10px; text-align: center;">
+                    <h3 style="margin-bottom: 10px;">Assessment Completion: ${completionPercentage}%</h3>
+                    <div style="background: rgba(255,255,255,0.2); border-radius: 20px; height: 20px; position: relative;">
+                        <div style="background: white; height: 100%; border-radius: 20px; width: ${completionPercentage}%; transition: width 0.3s ease;"></div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                    <h3 style="color: #495057; margin-bottom: 15px;">Patient Information</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div><strong>Name:</strong> ${patientInfo.name}</div>
+                        <div><strong>Age/Sex:</strong> ${patientInfo.ageSex}</div>
+                        <div><strong>ID:</strong> ${patientInfo.patientId}</div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <div style="margin-bottom: 8px;"><strong>Chief Complaints:</strong> ${patientInfo.chiefComplaints}</div>
+                        <div style="margin-bottom: 8px;"><strong>Past History:</strong> ${patientInfo.pastHistory}</div>
+                        <div><strong>Additional Points:</strong> ${patientInfo.additionalPoints}</div>
+                    </div>
+                </div>
+                
+                <div class="result-item">
+                    <div>
+                        <div class="result-label">Agni Assessment</div>
+                        <div class="result-interpretation">${assessmentResults.agni.interpretation}</div>
+                        <div style="font-size: 0.8em; color: #6c757d; margin-top: 5px;">
+                            ${getAgniClinicalRelevance(assessmentResults.agni.interpretation)}
+                        </div>
+                    </div>
+                    <div class="result-score" style="color: ${getScoreColor(assessmentResults.agni.totalScore, 8)}">${assessmentResults.agni.totalScore}/8</div>
+                </div>
+                
+                <div class="result-item">
+                    <div>
+                        <div class="result-label">Dosha Assessment</div>
+                        <div class="result-interpretation">
+                            Vata: ${getDoshaInterpretation(assessmentResults.dosha.vata)}, 
+                            Pitta: ${getDoshaInterpretation(assessmentResults.dosha.pitta)}, 
+                            Kapha: ${getDoshaInterpretation(assessmentResults.dosha.kapha)}
+                        </div>
+                        <div style="font-size: 0.8em; color: #6c757d; margin-top: 5px;">
+                            Dominant Dosha: ${getDominantDosha()}
+                        </div>
+                    </div>
+                    <div class="result-score">
+                        <div style="color: ${getScoreColor(assessmentResults.dosha.vata, 10)}; font-size: 0.9em;">V: ${assessmentResults.dosha.vata}</div>
+                        <div style="color: ${getScoreColor(assessmentResults.dosha.pitta, 10)}; font-size: 0.9em;">P: ${assessmentResults.dosha.pitta}</div>
+                        <div style="color: ${getScoreColor(assessmentResults.dosha.kapha, 10)}; font-size: 0.9em;">K: ${assessmentResults.dosha.kapha}</div>
+                    </div>
+                </div>
+                
+                <div class="result-item">
+                    <div>
+                        <div class="result-label">Dhatu Assessment</div>
+                        <div class="result-interpretation">${getDhatuInterpretation(assessmentResults.dhatu.totalScore)}</div>
+                        <div style="font-size: 0.8em; color: #6c757d; margin-top: 5px;">
+                            ${getDhatuDetails()}
+                        </div>
+                    </div>
+                    <div class="result-score" style="color: ${getScoreColor(assessmentResults.dhatu.totalScore, 42)}">${assessmentResults.dhatu.totalScore}/42</div>
+                </div>
+                
+                <div class="result-item">
+                    <div>
+                        <div class="result-label">Srotas Assessment</div>
+                        <div class="result-interpretation">${getSrotasInterpretation(assessmentResults.srotas.affectedSystems)}</div>
+                        <div style="font-size: 0.8em; color: #6c757d; margin-top: 5px;">
+                            ${getSrotasDetails()}
+                        </div>
+                    </div>
+                    <div class="result-score" style="color: ${getScoreColor(assessmentResults.srotas.affectedSystems, 9)}">${assessmentResults.srotas.affectedSystems}/9</div>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 20px; background: #e8f4f8; border-radius: 10px; border-left: 4px solid #17a2b8;">
+                    <h4 style="color: #138496; margin-bottom: 15px;">Clinical Recommendations & Notes</h4>
+                    <p style="margin-bottom: 10px;"><strong>Assessment Date:</strong> ${new Date().toLocaleDateString()}</p>
+                    <p style="margin-bottom: 10px;"><strong>Assessment Tool:</strong> Dr. Prakash Kumbar's 4-Pillar Assessment Scale</p>
+                    <div style="color: #495057; line-height: 1.6;">
+                        <p><strong>Important:</strong> This assessment provides a comprehensive evaluation based on classical Ayurvedic principles from Charaka, Sushruta, and Vagbhata texts.</p>
+                        <p>Results should be interpreted by qualified Ayurvedic practitioners in conjunction with:</p>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>Complete clinical examination</li>
+                            <li>Pulse diagnosis (Nadi Pariksha)</li>
+                            <li>Constitutional assessment (Prakriti analysis)</li>
+                            <li>Laboratory investigations where indicated</li>
+                        </ul>
+                        <p><strong>Next Steps:</strong> Treatment protocols should follow established Ayurvedic principles considering individual Prakriti, current Vikriti, seasonal factors, and lifestyle conditions.</p>
+                    </div>
+                </div>
+            `;
+            
+            // Add utility buttons after results are generated
+            setTimeout(addUtilityButtons, 100);
+        }
+
+        // Additional helper functions
+        function getAgniClinicalRelevance(interpretation) {
+            if (interpretation.includes('Sama')) return 'Optimal digestive function and metabolism';
+            if (interpretation.includes('Vishama')) return 'Risk: IBS, irregular metabolism, anxiety';
+            if (interpretation.includes('Tikshna')) return 'Risk: Hyperacidity, ulcers, gastritis';
+            if (interpretation.includes('Manda')) return 'Risk: Ama formation, metabolic sluggishness';
+            return 'Refer to detailed interpretation guidelines';
+        }
+
+        function getDoshaInterpretation(score) {
+            if (score <= 2) return 'Normal';
+            if (score <= 4) return 'Mild Dushti';
+            if (score <= 6) return 'Moderate Dushti';
+            return 'Severe Dushti';
+        }
+
+        function getDominantDosha() {
+            const { vata, pitta, kapha } = assessmentResults.dosha;
+            if (vata >= pitta && vata >= kapha) return `Vata (${vata})`;
+            if (pitta >= kapha) return `Pitta (${pitta})`;
+            return `Kapha (${kapha})`;
+        }
+
+        function getDhatuDetails() {
+            const score = assessmentResults.dhatu.totalScore;
+            if (score <= 10) return 'Minimal tissue-level disturbances detected';
+            if (score <= 25) return 'Moderate dhatu imbalances requiring attention';
+            return 'Significant dhatu dushti - comprehensive treatment indicated';
+        }
+
+        function getSrotasDetails() {
+            const affected = assessmentResults.srotas.affectedSystems;
+            if (affected === 0) return 'All channel systems functioning normally';
+            if (affected <= 3) return 'Few systems affected - targeted therapy recommended';
+            return 'Multiple systems involved - systemic approach needed';
+        }
+    </script>
+</body>
+</html>
